@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\admin\ClarificationController;
+use App\Http\Controllers\admin\ReportAdminController;
+use App\Http\Controllers\user\ReportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,15 +17,48 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', [UserController::class, 'login']);
-Route::post('logout', [UserController::class, 'logout']);
-Route::post('register', [UserController::class, 'register']);
-Route::get('user', [UserController::class, 'getAuthenticatedUser']);
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+], function(){
+    Route::post('login', [UserController::class, 'login'])->withoutMiddleware(['auth:api']);
+    Route::post('logout', [UserController::class, 'logout']);
+    Route::post('register', [UserController::class, 'register'])->withoutMiddleware(['auth:api']);
+    Route::get('me', [UserController::class, 'getAuthenticatedUser']);
+
+});
 
 // admin
-Route::middleware('jwt.verify')->group(function(){
-    Route::prefix('admin')->group(function(){
-        // me
-        Route::get('me', [UserController::class, 'getAuthenticatedUser']);
+Route::middleware(['jwt.verify'])->group(function(){
+    // admin
+    Route::middleware(['is.admin'])->group(function(){
+        Route::prefix('admin')->group(function(){
+            Route::prefix('clarification')->group(function(){
+                // aman
+                Route::get('', [ClarificationController::class, 'index']);
+                Route::post('store', [ClarificationController::class, 'store']);
+                Route::get('show/{id}', [ClarificationController::class, 'show']);
+                Route::delete('destroy/{id}', [ClarificationController::class, 'destroy']);
+            });
+            Route::prefix('report')->group(function(){
+                // aman
+                Route::get('', [ReportAdminController::class, 'index']);
+                Route::get('show/{id}', [ReportAdminController::class, 'show']);
+                Route::delete('destroy/{id}', [ReportAdminController::class, 'destroy']);
+                Route::get('trash', [ReportAdminController::class, 'trash']);
+                Route::get('restore/{id}', [ReportAdminController::class, 'restore']);
+                Route::delete('force-delete/{id}', [ReportAdminController::class, 'forceDelete']);
+            });
+        });
+    });
+
+    // user
+    Route::prefix('user')->group(function(){
+        Route::prefix('report')->group(function(){
+            // aman
+            Route::get('', [ReportController::class, 'index']);
+            Route::get('show/{id}', [ReportController::class, 'show']);
+            Route::post('store', [ReportController::class, 'store']);
+            Route::delete('destroy/{id}', [ReportController::class, 'destroy']);
+        });
     });
 });
