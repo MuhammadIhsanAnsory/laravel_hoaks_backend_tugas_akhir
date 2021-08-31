@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\ClarificationController;
 use App\Http\Controllers\admin\ReportAdminController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\user\ReportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,14 @@ Route::group([
     Route::get('me', [UserController::class, 'getAuthenticatedUser']);
 
 });
+
+// guest
+Route::prefix('guest')->group(function(){
+    Route::get('', [GuestController::class, 'index']);
+    Route::get('show/{id}', [GuestController::class, 'show']);
+    Route::get('search/{keyword}', [GuestController::class, 'search']);
+});
+
 
 // admin
 Route::middleware(['jwt.verify'])->group(function(){
