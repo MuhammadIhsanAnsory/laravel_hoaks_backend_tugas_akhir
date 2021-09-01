@@ -36,7 +36,7 @@ Route::prefix('guest')->group(function(){
 });
 
 
-// admin
+// MUST LOGIN
 Route::middleware(['jwt.verify'])->group(function(){
     // admin
     Route::middleware(['is.admin'])->group(function(){
@@ -68,6 +68,7 @@ Route::middleware(['jwt.verify'])->group(function(){
             Route::get('show/{id}', [ReportController::class, 'show']);
             Route::post('store', [ReportController::class, 'store']);
             Route::delete('destroy/{id}', [ReportController::class, 'destroy']);
+            
         });
     });
 });

@@ -15,7 +15,7 @@ class ReportController extends Controller
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
-            $reports = Report::where('user_id', $user->id)->paginate(20);
+            $reports = Report::with(['user'])->where('user_id', $user->id)->paginate(20);
           } catch (ModelNotFoundException $e) {
             return response()->json([
               'status' => false,
@@ -52,6 +52,11 @@ class ReportController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $images = [];
         $title_slug = Str::slug($request->title);
+        // return response()->json([
+        //   'status' => true,
+        //   'messages' => 'Aduan berhasil disimpan',
+        //   'data' => $request->title
+        // ], 200);
 
         if ($request->hasFile('images')) {
             $imgs = $request->file('images');
@@ -111,5 +116,19 @@ class ReportController extends Controller
             'status' => true,
             'message' => 'Aduan berhasil dihapus'
           ], 200);
+    }
+
+    public function downloadVideo($id)
+    {
+      try {
+        $report = Report::where('id', $id)->firstOrFail();
+      } catch (ModelNotFoundException $e) {
+        return response()->json([
+          'status' => false,
+          'message' => 'Aduan tidak ditemukan',
+          'data' => $e
+        ], 404);
+      }
+      return response()->download(public_path('/uploads/videos/'.$report->video));
     }
 }

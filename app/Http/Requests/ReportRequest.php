@@ -19,8 +19,7 @@ class ReportRequest extends FormRequest
             'title' => ['required'],
             'content' => ['required'],
             'link' => ['min:1'],
-            'images.0' => ['mimes:jpg,jpeg,png', 'max:3000'],
-            'video' => ['mimes:mp4,mpeg,avi', 'max:40000'],
+            'images.*' => ['mimes:jpg,jpeg,png', 'max:3000'],
         ];
     }
 

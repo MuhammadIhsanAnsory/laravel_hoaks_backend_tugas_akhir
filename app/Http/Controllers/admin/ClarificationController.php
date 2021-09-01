@@ -94,6 +94,9 @@ class ClarificationController extends Controller
             'video' => $video_name,
             'hoax' => $request->hoax
         ]);
+        $clarification->report->update([
+          'clarified' => true
+        ]);
 
         return response()->json([
             'status' => true,
