@@ -15,7 +15,7 @@ class ReportController extends Controller
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
-            $reports = Report::with(['user'])->where('user_id', $user->id)->paginate(20);
+            $reports = Report::with(['user'])->where('user_id', $user->id)->orderBy('created_at', 'desc')->paginate(20);
           } catch (ModelNotFoundException $e) {
             return response()->json([
               'status' => false,
@@ -50,32 +50,41 @@ class ReportController extends Controller
     public function store(ReportRequest $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $images = [];
         $title_slug = Str::slug($request->title);
         // return response()->json([
         //   'status' => true,
         //   'messages' => 'Aduan berhasil disimpan',
-        //   'data' => $request->title
+        //   'data' => $request
         // ], 200);
+       
+        $images = '';
+        // if ($request->hasFile('image')) {
+        //   $img = $request->image;
+        //   $destination = public_path('uploads/images/');
+        //   $image_name = $title_slug  . substr(str_shuffle('0123456789'), 1, 2) . '.' . $img->getClientOriginalExtension();
+        //   $img->move($destination, $image_name);
+        // }
 
         if ($request->hasFile('images')) {
-            $imgs = $request->file('images');
-            foreach ($imgs as $i=>$img) {
-                $file = $img;
-                $destination = public_path('uploads/images/');
-                $image_name = $title_slug . $i . substr(str_shuffle('0123456789'), 1, 2) . '.' . $img->getClientOriginalExtension();
-                $file->move($destination, $image_name);
-                
-                $imagesName[] = $image_name;
-            }
+          $imgs = $request->images;
+          foreach ($imgs as $i=>$img) {
+              $file = $img;
+              $destination = public_path('uploads/images/');
+              $image_name = $title_slug . $i . substr(str_shuffle('0123456789'), 1, 2) . '.' . $img->getClientOriginalExtension();
+              $file->move($destination, $image_name);
+              
+              $imagesName[] = $image_name;
+          }
 
-            $images = json_encode($imagesName);
+          $images = json_encode($imagesName);
 
-        }
-        $video_name = '';
+      }
+
+
+        $video_name = null;
 
         if ($request->hasFile('video')) {
-            $video = $request->file('video');
+            $video = $request->video;
             $destination_video = public_path('uploads/videos/');
             $video_name = $title_slug . substr(str_shuffle('0123456789'), 1, 2) . '.' . $video->getClientOriginalExtension();
             $video->move($destination_video, $video_name);

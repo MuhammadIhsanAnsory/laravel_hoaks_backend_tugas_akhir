@@ -19,7 +19,8 @@ class ReportRequest extends FormRequest
             'title' => ['required'],
             'content' => ['required'],
             'link' => ['min:1'],
-            'images.*' => ['mimes:jpg,jpeg,png', 'max:3000'],
+            'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
+            // 'video' => ['mimetypes:mp4,x-flv,quicktime,x-msvideo,x-ms-wmv', 'max:40960'],
         ];
     }
 
@@ -29,9 +30,9 @@ class ReportRequest extends FormRequest
             'title.required' => 'Judul aduan harus ada',
             'content.required' => 'Isi aduan harus ada',
             'link.min' => 'Link harus ada',
-            'images.mimes' => 'Ekstensi gambar harus jpg, jpeg, atau png',
-            'images.max' => 'Gambar maksimal 3mb',
-            'video.mimes' => 'Ekstensi video harus mp4, mpeg, atau avi',
+            'image.mimes' => 'Ekstensi gambar harus jpg, jpeg, atau png',
+            'image.max' => 'Gambar maksimal 3mb',
+            'video.mimetypes' => 'Ekstensi video harus mp4, mpeg, atau avi',
             'video.max' => 'Gambar maksimal 20mb',
         ];
     }

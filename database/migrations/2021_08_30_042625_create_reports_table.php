@@ -21,7 +21,7 @@ class CreateReportsTable extends Migration
             $table->string('slug');
             $table->string('link');
             $table->text('content');
-            $table->json('images')->nullable();
+            $table->string('image')->nullable();
             $table->string('video')->nullable();
             $table->boolean('clarified')->default(false);
             $table->boolean('hoax')->nullable();
