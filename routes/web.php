@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\user\ReportController;
+use App\Http\Controllers\GuestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,5 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('report/download-video/{id}', [ReportController::class, 'downloadVideo']);
+Route::get('report/download-video/{id}', [GuestController::class, 'downloadVideo']);
 

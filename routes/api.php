@@ -31,6 +31,7 @@ Route::group([
 // guest
 Route::prefix('guest')->group(function(){
     Route::get('', [GuestController::class, 'index']);
+    Route::get('landing', [GuestController::class, 'landing']);
     Route::get('show/{id}', [GuestController::class, 'show']);
     Route::get('search/{keyword}', [GuestController::class, 'search']);
 });
@@ -67,6 +68,7 @@ Route::middleware(['jwt.verify'])->group(function(){
             Route::get('', [ReportController::class, 'index']);
             Route::get('show/{id}', [ReportController::class, 'show']);
             Route::post('store', [ReportController::class, 'store']);
+            Route::put('update/{id}', [ReportController::class, 'update']);
             Route::delete('destroy/{id}', [ReportController::class, 'destroy']);
             
         });

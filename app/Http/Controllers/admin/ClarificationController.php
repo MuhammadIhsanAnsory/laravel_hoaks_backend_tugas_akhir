@@ -95,7 +95,8 @@ class ClarificationController extends Controller
             'hoax' => $request->hoax
         ]);
         $clarification->report->update([
-          'clarified' => true
+          'clarified' => true,
+          'hoax' =>  $request->hoax
         ]);
 
         return response()->json([

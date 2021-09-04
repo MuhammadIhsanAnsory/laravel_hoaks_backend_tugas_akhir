@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class ReportRequest extends FormRequest
 {
@@ -15,13 +16,27 @@ class ReportRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'title' => ['required'],
-            'content' => ['required'],
-            'link' => ['min:1'],
-            'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
-            // 'video' => ['mimetypes:mp4,x-flv,quicktime,x-msvideo,x-ms-wmv', 'max:40960'],
-        ];
+        switch ($this->getMethod()) {
+        case 'POST': {
+            return [
+                'title' => ['required'],
+                'content' => ['required'],
+                'link' => ['min:1'],
+                'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
+            ];
+        }
+        case 'PUT': {
+            return [
+                'title' => ['required'],
+                'content' => ['required'],
+                'link' => ['min:1'],
+                'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
+            ];
+        }
+        default:
+        break;
+        }
+        
     }
 
     public function messages()
@@ -41,7 +56,8 @@ class ReportRequest extends FormRequest
     protected function failedValidation(Validator $validator) { 
         throw new HttpResponseException(response()->json([
             'errors' => $validator->errors()->all(),
-            'status' => false 
+            'status' => false ,
+            'data' => $this->request
         ], 422)); 
     }
 }
