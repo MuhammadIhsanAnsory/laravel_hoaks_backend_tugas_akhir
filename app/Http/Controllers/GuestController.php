@@ -10,9 +10,9 @@ class GuestController extends Controller
 {
   public function landing()
   {
-    $reports = Report::orderBy('created_at', 'desc')->where('clarified', true)->take(7);
-    $hoaxs = Report::orderBy('created_at', 'desc')->where('clarified', true)->where('hoax', true)->take(4);
-    $facts = Report::orderBy('created_at', 'desc')->where('clarified', true)->where('hoax', false)->take(4);
+    $reports = Report::orderBy('created_at', 'desc')->where('clarified', true)->take(7)->get();
+    $hoaxs = Report::orderBy('created_at', 'desc')->where('clarified', true)->where('hoax', true)->take(4)->get();
+    $facts = Report::orderBy('created_at', 'desc')->where('clarified', true)->where('hoax', false)->take(4)->get();
 
     return response()->json([
         'status' => true,
