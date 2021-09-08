@@ -42,6 +42,7 @@ Route::middleware(['jwt.verify'])->group(function(){
     // admin
     Route::middleware(['is.admin'])->group(function(){
         Route::prefix('admin')->group(function(){
+            Route::get('dashboard', [ClarificationController::class, 'dashboard']);
             Route::prefix('clarification')->group(function(){
                 // aman
                 Route::get('', [ClarificationController::class, 'index']);

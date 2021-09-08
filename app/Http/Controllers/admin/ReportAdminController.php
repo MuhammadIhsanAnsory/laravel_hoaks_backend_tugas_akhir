@@ -13,7 +13,7 @@ class ReportAdminController extends Controller
     public function index()
     {
         try {
-            $reports = Report::wiht(['user'])->paginate(20);
+            $reports = Report::with(['user'])->paginate(20);
           } catch (ModelNotFoundException $e) {
             return response()->json([
               'status' => false,
@@ -47,8 +47,7 @@ class ReportAdminController extends Controller
     public function destroy($id)
     {
         try {
-            $user = JWTAuth::parseToken()->authenticate();
-            $report = Report::where('user_id', $user->id)->where('id', $id)->firstOrFail();
+            $report = Report::where('id', $id)->firstOrFail();
           } catch (ModelNotFoundException $e) {
             return response()->json([
               'status' => false,

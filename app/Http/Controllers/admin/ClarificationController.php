@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ClarificationRequest;
 use App\Models\Clarification;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -30,6 +32,18 @@ class ClarificationController extends Controller
           ], 200);
     }
 
+    public function dashboard()
+    {
+      $report = Report::count();
+      $clarification = Clarification::count();
+      $user = User::count();
+      return response()->json([
+        'status' => true,
+        'data' => compact('clarification', 'user', 'report')
+      ], 200);
+
+    }
+
     public function show($id)
     {
         try {
@@ -51,11 +65,12 @@ class ClarificationController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
         $calrification_exist = Clarification::where('report_id',$request->report_id)->get()->first();
-        if(isset($calrification_exist)){
-          return response()->json([
-            'status' => false,
-            'message' => 'Aduan sudah diklarifikasi',
-          ], 422);
+        if(isset($calrification_exist) && $calrification_exist != null){
+          return throw new HttpResponseException(response()->json([
+            'errors' => ['Aduan sudah di klarifikasi'],
+            'status' => false ,
+            'test' =>  $calrification_exist
+        ], 422)); 
         }
 
         $images = [];
@@ -83,6 +98,11 @@ class ClarificationController extends Controller
             $video_name = $title_slug . substr(str_shuffle('0123456789'), 1, 2) . '.' . $video->getClientOriginalExtension();
             $video->move($destination_video, $video_name);
         }
+        if($request->hoax == 'true' || $request->hoax == true || $request->hoax == 1){
+          $hoax = true;
+        }else {
+          $hoax = false;
+        }
 
         $clarification = Clarification::create([
             'user_id' => $user->id,
@@ -93,11 +113,11 @@ class ClarificationController extends Controller
             'link' => $request->link,
             'images' => $images,
             'video' => $video_name,
-            'hoax' => $request->hoax
+            'hoax' => $hoax
         ]);
         $clarification->report->update([
           'clarified' => true,
-          'hoax' =>  $request->hoax
+          'hoax' =>  $hoax
         ]);
 
         return response()->json([
@@ -180,7 +200,7 @@ class ClarificationController extends Controller
     public function destroy($id)
     {
         try {
-            $clarifications = Clarification::where('id', $id)->firstOrFail();
+            $clarification = Clarification::where('id', $id)->firstOrFail();
           } catch (ModelNotFoundException $e) {
             return response()->json([
               'status' => false,
@@ -188,7 +208,10 @@ class ClarificationController extends Controller
               'data' => $e
             ], 404);
           }
-          $clarifications->delete();
+          $clarification->report->update([
+            'clarified' => false
+          ]);
+          $clarification->delete();
           return response()->json([
             'status' => true,
             'message' => 'Klarifikasi berhasil dihapus'

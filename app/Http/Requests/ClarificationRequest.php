@@ -21,7 +21,7 @@ class ClarificationRequest extends FormRequest
             'content' => ['required'],
             'link' => ['min:1'],
             'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
-            'hoax' => ['required', 'boolean'],
+            'hoax' => ['required'],
         ];
     }
 

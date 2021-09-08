@@ -130,10 +130,10 @@ class ReportController extends Controller
           $destiVideo = 'uploads/videos/' . $report->video;
               File::delete($destiVideo);
         }
-          $video = $request->video;
-          $destination_video = public_path('uploads/videos/');
-          $video_name = $title_slug . substr(str_shuffle('0123456789'), 1, 2) . time() . '.' . $video->getClientOriginalExtension();
-          $video->move($destination_video, $video_name);
+        $video = $request->video;
+        $destination_video = public_path('uploads/videos/');
+        $video_name = $title_slug . substr(str_shuffle('0123456789'), 1, 2) . time() . '.' . $video->getClientOriginalExtension();
+        $video->move($destination_video, $video_name);
       }
 
       $report->update([
@@ -154,28 +154,21 @@ class ReportController extends Controller
 
     public function destroy($id)
     {
-        try {
-            $user = JWTAuth::parseToken()->authenticate();
-            $report = Report::where('user_id', $user->id)->where('id', $id)->firstOrFail();
-          } catch (ModelNotFoundException $e) {
-            return response()->json([
-              'status' => false,
-              'message' => 'Aduan tidak ditemukan',
-              'data' => $e
-            ], 404);
-          }
-          if($report->clarified == 1 || $report->clarified == true){
-            return response()->json([
-              'status' => false,
-              'message' => 'Aduan tidak bisa dihapus',
-              'data' => $e
-            ], 422);
-          }
-          $report->delete();
-          return response()->json([
-            'status' => true,
-            'message' => 'Aduan berhasil dihapus'
-          ], 200);
+      try {
+        $user = JWTAuth::parseToken()->authenticate();
+        $report = Report::where('user_id', $user->id)->where('id', $id)->firstOrFail();
+      } catch (ModelNotFoundException $e) {
+        return response()->json([
+          'status' => false,
+          'message' => 'Aduan tidak ditemukan',
+          'data' => $e
+        ], 404);
+      }
+      $report->delete();
+      return response()->json([
+        'status' => true,
+        'message' => 'Aduan berhasil dihapus'
+      ], 200);
     }
 
 }
