@@ -27,6 +27,8 @@ class JwtMiddleware
                 ]);
             }else if($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
                 return response()->json(['status' => 'Token is Expired']);
+            }else if($user->blocked == true || $user->blocked == 1 || $user->blocked == '1'){
+                return response()->json(['status' => 'Pengguna diblokir silahkan hubungi admin untuk mengaktifkan kembali']);
             }else{
                 return response()->json(['status' => 'Authorization Token Not Found']);
             }

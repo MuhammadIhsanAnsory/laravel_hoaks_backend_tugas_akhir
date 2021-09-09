@@ -18,7 +18,7 @@ class ClarificationController extends Controller
     public function index()
     {
         try {
-            $clarifications = Clarification::with(['report', 'user'])->paginate(20);
+            $clarifications = Clarification::with(['report', 'user'])->orderBy('created_at', 'desc')->paginate(20);
           } catch (ModelNotFoundException $e) {
             return response()->json([
               'status' => false,
@@ -57,7 +57,7 @@ class ClarificationController extends Controller
           }
           return response()->json([
             'status' => true,
-            'data' => compact('clarifications')
+            'data' => compact('clarification')
           ], 200);
     }
 
@@ -98,7 +98,7 @@ class ClarificationController extends Controller
             $video_name = $title_slug . substr(str_shuffle('0123456789'), 1, 2) . '.' . $video->getClientOriginalExtension();
             $video->move($destination_video, $video_name);
         }
-        if($request->hoax == 'true' || $request->hoax == true || $request->hoax == 1){
+        if($request->hoax == 'true'){
           $hoax = true;
         }else {
           $hoax = false;
@@ -130,7 +130,6 @@ class ClarificationController extends Controller
     public function update(ClarificationRequest $request, $id)
     {
       try {
-        $user = JWTAuth::parseToken()->authenticate();
         $clarification = Clarification::with(['report', 'user'])->where('id', $id)->firstOrFail();
       } catch (ModelNotFoundException $e) {
         return response()->json([
@@ -139,6 +138,11 @@ class ClarificationController extends Controller
           'data' => $e
         ], 404);
       }
+      // return response()->json([
+      //   'status' => true,
+      //   'messages' => 'Klarifikasi berhasil disimpan',
+      //   'data' => $request->hoax
+      // ], 200);
 
         $images = $clarification->images;
         $title_slug = Str::slug($request->title);
@@ -162,7 +166,11 @@ class ClarificationController extends Controller
           $images = json_encode($imagesName);
       }
         $video_name = $clarification->video;
-
+        if($request->hoax == 'true'){
+          $hoax = true;
+        }else {
+          $hoax = false;
+        }
         if ($request->hasFile('video')) {
           if(isset($clarification->video)){
             $destiVideo = 'uploads/videos/' . $clarification->video;
@@ -175,19 +183,17 @@ class ClarificationController extends Controller
         }
 
         $clarification->update([
-            'user_id' => $user->id,
-            'report_id' => $request->report_id,
             'title' => $request->title,
             'slug' => $title_slug,
             'content' => $request->content,
             'link' => $request->link,
             'images' => $images,
             'video' => $video_name,
-            'hoax' => $request->hoax
+            'hoax' => $hoax
         ]);
         $clarification->report->update([
           'clarified' => true,
-          'hoax' =>  $request->hoax
+          'hoax' =>  $hoax
         ]);
 
         return response()->json([

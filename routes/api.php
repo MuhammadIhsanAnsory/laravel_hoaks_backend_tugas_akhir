@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\ClarificationController;
 use App\Http\Controllers\admin\ReportAdminController;
+use App\Http\Controllers\admin\UserAdminController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\user\ReportController;
 use App\Http\Controllers\UserController;
@@ -32,6 +33,7 @@ Route::group([
 Route::prefix('guest')->group(function(){
     Route::get('', [GuestController::class, 'index']);
     Route::get('landing', [GuestController::class, 'landing']);
+    Route::get('report/sort/{by}', [GuestController::class, 'sort']);
     Route::get('show/{id}', [GuestController::class, 'show']);
     Route::get('search/{keyword}', [GuestController::class, 'search']);
 });
@@ -47,6 +49,7 @@ Route::middleware(['jwt.verify'])->group(function(){
                 // aman
                 Route::get('', [ClarificationController::class, 'index']);
                 Route::post('store', [ClarificationController::class, 'store']);
+                Route::put('update/{id}', [ClarificationController::class, 'update']);
                 Route::get('show/{id}', [ClarificationController::class, 'show']);
                 Route::delete('destroy/{id}', [ClarificationController::class, 'destroy']);
             });
@@ -58,6 +61,11 @@ Route::middleware(['jwt.verify'])->group(function(){
                 Route::get('trash', [ReportAdminController::class, 'trash']);
                 Route::get('restore/{id}', [ReportAdminController::class, 'restore']);
                 Route::delete('force-delete/{id}', [ReportAdminController::class, 'forceDelete']);
+            });
+            Route::prefix('user')->group(function(){
+                Route::get('', [UserAdminController::class, 'index']);
+                Route::get('block/{id}', [UserAdminController::class, 'block']);
+                Route::get('unblock/{id}', [UserAdminController::class, 'unblock']);
             });
         });
     });

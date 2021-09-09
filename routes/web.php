@@ -17,5 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('report/download-video/{id}', [GuestController::class, 'downloadVideo']);
+Route::get('report/download-video/{id}/{slug}', [GuestController::class, 'reportVideo']);
+Route::get('clarification/download-video/{id}/{slug}', [GuestController::class, 'clarificationVideo']);
 

@@ -15,14 +15,31 @@ class ClarificationRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'report_id' => ['required'],
-            'title' => ['required'],
-            'content' => ['required'],
-            'link' => ['min:1'],
-            'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
-            'hoax' => ['required'],
-        ];
+        switch ($this->getMethod()) {
+            case 'POST': {
+                return [
+                    'report_id' => ['required'],
+                    'title' => ['required'],
+                    'content' => ['required'],
+                    'link' => ['min:1'],
+                    'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
+                    'hoax' => ['required'],
+                ];
+            }
+            case 'PUT': {
+                return [
+                    'title' => ['required'],
+                    'content' => ['required'],
+                    'link' => ['min:1'],
+                    'images.*' => ['mimes:jpg,jpeg,png,svg,gif', 'max:4096'],
+                    'hoax' => ['required'],
+                ];
+            }
+            default:
+            break;
+        }
+
+        
     }
 
     public function messages()

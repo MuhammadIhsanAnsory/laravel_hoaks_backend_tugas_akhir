@@ -13,7 +13,7 @@ class ReportAdminController extends Controller
     public function index()
     {
         try {
-            $reports = Report::with(['user'])->paginate(20);
+            $reports = Report::with(['user'])->orderBy('created_at', 'desc')->paginate(20);
           } catch (ModelNotFoundException $e) {
             return response()->json([
               'status' => false,
