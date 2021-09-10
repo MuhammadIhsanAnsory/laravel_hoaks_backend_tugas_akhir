@@ -24,7 +24,7 @@ class GuestController extends Controller
 
   public function index()
   {
-      $reports = Report::where('clarified', true)->orderBy('created_at', 'desc')->paginate(2);
+      $reports = Report::where('clarified', true)->orderBy('created_at', 'desc')->paginate(12);
 
       return response()->json([
           'status' => true,
@@ -52,7 +52,7 @@ class GuestController extends Controller
   public function search($keyword)
   {
       try {
-          $reports = Report::with(['clarification', 'user'])->where('title', 'like', '%' . $keyword . '%')->orderBy('created_at', 'desc')->paginate(2);
+          $reports = Report::with(['clarification', 'user'])->where('title', 'like', '%' . $keyword . '%')->orderBy('created_at', 'desc')->paginate(12);
         } catch (ModelNotFoundException $e) {
           return response()->json([
             'status' => false,
@@ -69,7 +69,7 @@ class GuestController extends Controller
   public function sort($by)
   {
       try {
-          $reports = Report::with(['clarification', 'user'])->where('hoax', $by)->orderBy('created_at', 'desc')->paginate(2);
+          $reports = Report::with(['clarification', 'user'])->where('hoax', $by)->orderBy('created_at', 'desc')->paginate(12);
         } catch (ModelNotFoundException $e) {
           return response()->json([
             'status' => false,
