@@ -10,6 +10,7 @@ Fitur backend ini begini nih :
 - Menambahkan klarifikasi aduan berita oleh admin (pihak yang memiliki kewenangan menilai berita)
 - auth (login, register)
 - memakai JWT untuk token API nya
+- dll
 
 Oh ya ini yang mau frontendnya silahkan cek di : https://github.com/MuhammadIhsanAnsory/vue_hoaks_frontend_tugas_akhir
 
